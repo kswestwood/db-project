@@ -68,11 +68,11 @@ def view_members_by_status(cursor, active=True):
 	print(f"{status.capitalize()} Members:\n")
 
 	cursor.execute("""
-				SELECT p.id, p.name, m.gold, m.silver, m.active
-				FROM person p
-				JOIN member mb ON p.id = mb.member_id
-				JOIN membership m ON mb.member_id = m.member_id
-				WHERE m.active = %s
+		SELECT p.id, p.name, m.gold, m.silver, m.active
+		FROM person p
+		JOIN member mb ON p.id = mb.member_id
+		JOIN membership m ON mb.member_id = m.member_id
+		WHERE m.active = %s
 	""", (active,))
 
 	members = cursor.fetchall()
