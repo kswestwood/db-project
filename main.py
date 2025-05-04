@@ -58,7 +58,7 @@ def generate_trainer_schedule(cursor):
 							INSERT INTO trainer_schedule 
 							(trainer_id, member_id, member_book, member_cancel, date, time, booked, available)
 							VALUES (%s, NULL, FALSE, FALSE, %s, %s, FALSE, TRUE)
-					""", (trainer_id, current_date, time_str))
+						""", (trainer_id, current_date, time_str))
 			day_offset += 1
 			
 	print("Trainer schedules updated for the next 10 weekdays.")
@@ -73,7 +73,7 @@ def view_members_by_status(cursor, active=True):
 				JOIN member mb ON p.id = mb.member_id
 				JOIN membership m ON mb.member_id = m.member_id
 				WHERE m.active = %s
-		""", (active,))
+	""", (active,))
 
 	members = cursor.fetchall()
 	if members:
