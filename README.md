@@ -1,1 +1,3 @@
 # Databases Project due 5/2/2025
+
+Need to install mysql connect and have MySQL installed with a server setup to your localhost. This code requests the user and password to that MySQL server in order to access and work with the database. First, run the whole .sql script in your MySQL server, then run this python script in your terminal in order to access the database. Users are listed under the persons table in order to find passwords for different types of users. Id = 1 is the manager and Ids 2, 3, 4, & 5 are trainers. So depending on what user you login with, you will be given different options in order to modify or view the database. The rest of the following ids are active/inactive members.
