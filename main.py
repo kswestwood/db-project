@@ -49,16 +49,16 @@ def generate_trainer_schedule(cursor):
 					time_str = f"{hour:02}:00:00"
 
 					cursor.execute("""
-												SELECT 1 FROM trainer_schedule
-												WHERE trainer_id = %s AND date = %s AND time = %s
-										""", (trainer_id, current_date, time_str))
+						SELECT 1 FROM trainer_schedule
+						WHERE trainer_id = %s AND date = %s AND time = %s
+					""", (trainer_id, current_date, time_str))
 					
 					if cursor.fetchone() is None:
 						cursor.execute("""
-														INSERT INTO trainer_schedule 
-														(trainer_id, member_id, member_book, member_cancel, date, time, booked, available)
-														VALUES (%s, NULL, FALSE, FALSE, %s, %s, FALSE, TRUE)
-												""", (trainer_id, current_date, time_str))
+							INSERT INTO trainer_schedule 
+							(trainer_id, member_id, member_book, member_cancel, date, time, booked, available)
+							VALUES (%s, NULL, FALSE, FALSE, %s, %s, FALSE, TRUE)
+					""", (trainer_id, current_date, time_str))
 			day_offset += 1
 			
 	print("Trainer schedules updated for the next 10 weekdays.")
