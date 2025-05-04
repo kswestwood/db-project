@@ -565,54 +565,79 @@ if connection:
 						input("Press Enter to continue...")
 
 			elif is_member:
-				while True:
-					clear_screen()
-					logged_in = True
-					print("----------Member Menu!----------")
-					print("1. View trainer availability")
-					print("2. Book a trainer session")
-					print("3. Cancel a trainer session")
-					print("4. View your membership")
-					print("5. Log a workout")
-					print("6. View past workouts")
-					print("0. Logout")
+				cursor.execute("SELECT active, inactive FROM membership WHERE member_id = %s", (user_id,))
+				result = cursor.fetchone()
+				
+				if result and result[1]:
+					while True:
+						clear_screen()
+						logged_in = True
+						print("----------Inactive Member Menu----------")
+						print("I'm sorry, your membership is currently inactive. In order to reactivate your membership, please speak to the manager.")
+						print("1. View your membership")
+						print("0. Logout")
 
-					choice = input("Enter your choice: ")
-					if choice == "1":
+						choice = input("Enter your choice: ")
+						if choice == "1":
+							clear_screen()
+							view_membership(cursor, user_id)
+							input("\nPress Enter to return to home page.")
+						elif choice == "0":
+							clear_screen()
+							print("Logging out...")
+							break
+						else:
+							print("Invalid choice. Try again.")
+							input("Press Enter to continue...")
+				else:
+					while True:
 						clear_screen()
-						view_available_trainer_slots(cursor)
-						input("\nPress Enter to return to home page.")
-					elif choice == "2":
-						clear_screen()
-						book_trainer_slot(cursor, user_id)
-						connection.commit()
-						input("\nPress Enter to return to home page.")
-					elif choice == "3":
-						clear_screen()
-						cancel_trainer_session(cursor, user_id)
-						connection.commit()
-						input("\nPress Enter to return to home page.")
-					elif choice == "4":
-						clear_screen()
-						view_membership(cursor, user_id)
-						input("\nPress Enter to return to home page.")
-					elif choice == "5":
-						clear_screen()
-						log_workout(cursor, user_id)
-						connection.commit()
-						input("\nPress Enter to return to home page.")
-					elif choice == "6":
-						clear_screen()
-						view_workout_information(cursor, user_id)
-						connection.commit()
-						input("\nPress Enter to return to home page.")
-					elif choice == "0":
-						clear_screen()
-						print("Logging out...")
-						break
-					else:
-						print("Invalid choice. Try again.")
-						input("Press Enter to continue...")
+						logged_in = True
+						print("----------Member Menu!----------")
+						print("1. View trainer availability")
+						print("2. Book a trainer session")
+						print("3. Cancel a trainer session")
+						print("4. View your membership")
+						print("5. Log a workout")
+						print("6. View past workouts")
+						print("0. Logout")
+
+						choice = input("Enter your choice: ")
+						if choice == "1":
+							clear_screen()
+							view_available_trainer_slots(cursor)
+							input("\nPress Enter to return to home page.")
+						elif choice == "2":
+							clear_screen()
+							book_trainer_slot(cursor, user_id)
+							connection.commit()
+							input("\nPress Enter to return to home page.")
+						elif choice == "3":
+							clear_screen()
+							cancel_trainer_session(cursor, user_id)
+							connection.commit()
+							input("\nPress Enter to return to home page.")
+						elif choice == "4":
+							clear_screen()
+							view_membership(cursor, user_id)
+							input("\nPress Enter to return to home page.")
+						elif choice == "5":
+							clear_screen()
+							log_workout(cursor, user_id)
+							connection.commit()
+							input("\nPress Enter to return to home page.")
+						elif choice == "6":
+							clear_screen()
+							view_workout_information(cursor, user_id)
+							connection.commit()
+							input("\nPress Enter to return to home page.")
+						elif choice == "0":
+							clear_screen()
+							print("Logging out...")
+							break
+						else:
+							print("Invalid choice. Try again.")
+							input("Press Enter to continue...")
 
 		else:
 			print("Invalid ID or password.")
