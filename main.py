@@ -89,6 +89,15 @@ def view_members_by_status(cursor, active=True):
 	else:
 		print("No members found.")
 
+	if active:
+		cursor.execute("""
+			SELECT SUM(gold), SUM(silver)
+			FROM membership
+			WHERE active = TRUE
+		""")
+		gold_total, silver_total = cursor.fetchone()
+		print(f"\nNumber of members who have Gold or Silver: {gold_total or 0} Gold members, {silver_total or 0} Silver members.")
+
 def deactivate_member(cursor):
 	print("Deactivating a Member")
 	member_id = input("Enter the member ID to deactivate: ")
@@ -455,6 +464,54 @@ def view_workout_information(cursor, member_id):
 			distance, duration = cardio
 			print(f"Cardio: {distance} distance, {duration} duration")
 
+def delete_workout(cursor, member_id):
+	print("Delete a workout.")
+
+	cursor.execute("""
+		SELECT workout_id, member_date, member_time, easy, hard
+		FROM workout
+		WHERE member_id = %s
+		ORDER BY member_date DESC, member_time DESC
+	""", (member_id,))
+	workouts = cursor.fetchall()
+
+	if not workouts:
+		print("You have no logged workouts.")
+		return
+	
+	print("\nYour workouts:")
+	index = 1
+	for workout in workouts:
+		workout_id = workout[0]
+		date = workout[1]
+		time = workout[2]
+		easy = workout[3]
+		hard = workout[4]
+
+		if easy:
+			intensity = "Easy"
+		elif hard:
+			intensity = "Hard"
+		else:
+			intensity = "Unknown"
+		print(f"{index} - ID: {workout_id} | {date} at {time} | Intensity: {intensity}")
+		index += 1
+
+	try:
+		choice = int(input("\nEnter the number of the workout you'd like to delete (or 0 to cancel action): "))
+		if choice == 0:
+			print("Action canceled.")
+			return
+		selected_workout = workouts[choice - 1][0]
+	except (ValueError, IndexError):
+		print("Invalid selection.")
+		return
+	
+	cursor.execute("DELETE FROM strength WHERE workout_id = %s", (selected_workout,))
+	cursor.execute("DELETE FROM cardio WHERE workout_id = %s", (selected_workout,))
+	cursor.execute("DELETE FROM workout WHERE workout_id = %s", (selected_workout,))
+
+	print("\nWorkout deleted successfully!")
 
 
 connection = connect_db()
@@ -600,6 +657,7 @@ if connection:
 						print("4. View your membership")
 						print("5. Log a workout")
 						print("6. View past workouts")
+						print("7. Remove a past workout")
 						print("0. Logout")
 
 						choice = input("Enter your choice: ")
@@ -631,6 +689,10 @@ if connection:
 							view_workout_information(cursor, user_id)
 							connection.commit()
 							input("\nPress Enter to return to home page.")
+						elif choice == "7":
+							clear_screen()
+							delete_workout(cursor, user_id)
+							input("\nPress Enter to return to home page")
 						elif choice == "0":
 							clear_screen()
 							print("Logging out...")
